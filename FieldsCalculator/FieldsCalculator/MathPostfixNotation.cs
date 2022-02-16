@@ -7,9 +7,11 @@ namespace PostfixNotation
     //Класс рассчёта математического выражения
     public class MathPostfixNotation
     {
-        static int mod(int x, int m)
+        static int mod(int x, int m, bool log = true)
         {
-            return (x % m + m) % m;
+            var r = (x % m + m) % m;
+            if (log) Console.WriteLine($"{x} mod {m} = {r}");
+            return r;
         }
 
         //"входной" метод класса
@@ -17,26 +19,9 @@ namespace PostfixNotation
         {
 
             string output = GetExpression(input); //преобразование выражения в постфиксную запись
+            Console.WriteLine(output);
             return Counting(output.Replace('.', ','), field); //решение выражения
 
-        }
-
-        static public int Reverse(int m, int n)
-        {
-
-            while (m != n)
-            {
-                if (m > n)
-                {
-                    m = m - n;
-                }
-                else
-                {
-                    n = n - m;
-                }
-            }
-
-            return n;
         }
 
         public static (int g, int x, int y) egcd(int a,  int b) 
@@ -45,18 +30,17 @@ namespace PostfixNotation
                 return (b, 0, 1);
             else 
             {
-                var data = egcd(mod(b, a), a);
+                var data = egcd(mod(b, a, log:false), a);
                 return (data.g, data.y - (b / (int)a) * data.x, data.x);
             }
         }
 
-        // x = mulinv(b) mod n, (x * b) % n == 1
         public static int mulinv(int b, int n) {
             var data = egcd(b, n);
-            Console.WriteLine($"{data.g},{data.x}");
-            if (data.g == 1)
-                return mod(data.x,n);
-            return 0;
+            //Console.WriteLine($"{data.g},{data.x}");
+            //if (data.g != 1)
+            //    throw new Exception($"Ошибка поиска обратного числа для {b} в поле {n}");
+            return mod(data.x, n);
 
         }
 
@@ -195,17 +179,17 @@ namespace PostfixNotation
                         break;
 
 
-                    case "^":
-                        result = (mod((int)Math.Pow(mod(int.Parse(mas[i - 2]), field.size), mod(int.Parse(mas[i - 1]), field.size)), field.size)).ToString();
+                    //case "^":
+                    //    result = (mod((int)Math.Pow(mod(int.Parse(mas[i - 2]), field.size), mod(int.Parse(mas[i - 1]), field.size)), field.size)).ToString();
 
 
 
-                        mas[i - 2] = result;
-                        for (int j = i - 1; j < mas.Length - 2; j++)
-                            mas[j] = mas[j + 2];
-                        Array.Resize(ref mas, mas.Length - 2);
-                        i -= 2;
-                        break;
+                    //    mas[i - 2] = result;
+                    //    for (int j = i - 1; j < mas.Length - 2; j++)
+                    //        mas[j] = mas[j + 2];
+                    //    Array.Resize(ref mas, mas.Length - 2);
+                    //    i -= 2;
+                    //    break;
 
 
                 }

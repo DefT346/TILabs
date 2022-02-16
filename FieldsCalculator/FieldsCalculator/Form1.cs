@@ -62,9 +62,16 @@ namespace FieldsCalculator
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Field field = new Field(int.Parse(textBox2.Text));
-            var result = MathPostfixNotation.Calculate(textBox1.Text, field) % field.size;
-            label1.Text = result.ToString();
+            try
+            {
+                Field field = new Field(int.Parse(textBox2.Text));
+                var result = MathPostfixNotation.Calculate(textBox1.Text, field) % field.size;
+                label1.Text = result.ToString();
+            }
+            catch(Exception ex)
+            {
+                label1.Text = ex.Message;
+            }
             //label1.Text = MathPostfixNotation.mulinv(3,13).ToString();
         }
     }

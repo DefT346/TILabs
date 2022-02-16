@@ -48,7 +48,7 @@ namespace FieldsCalculator
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(496, 29);
             this.textBox1.TabIndex = 0;
-            this.textBox1.Text = "(5+7)*8/(3-9*5)^3";
+            this.textBox1.Text = "(5+7)*8/(3-9*5)+3";
             // 
             // textBox2
             // 
@@ -57,7 +57,7 @@ namespace FieldsCalculator
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(47, 29);
             this.textBox2.TabIndex = 1;
-            this.textBox2.Text = "13";
+            this.textBox2.Text = "18";
             this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // label1
@@ -102,16 +102,14 @@ namespace FieldsCalculator
             // 
             // panel1
             // 
-            this.panel1.AutoSize = true;
             this.panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.panel1.BackColor = System.Drawing.Color.Azure;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.button2);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(691, 19);
+            this.panel1.Size = new System.Drawing.Size(692, 26);
             this.panel1.TabIndex = 6;
             // 
             // label4
@@ -129,11 +127,13 @@ namespace FieldsCalculator
             this.button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.button2.BackColor = System.Drawing.Color.Brown;
             this.button2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.Location = new System.Drawing.Point(680, 0);
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.button2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+            this.button2.Location = new System.Drawing.Point(663, 0);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(9, 17);
+            this.button2.Size = new System.Drawing.Size(27, 24);
             this.button2.TabIndex = 7;
+            this.button2.Text = "X";
             this.button2.UseVisualStyleBackColor = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 

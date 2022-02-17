@@ -4,7 +4,6 @@ using FieldsCalculator;
 
 namespace PostfixNotation
 {
-    //Класс рассчёта математического выражения
     public class MathPostfixNotation
     {
         static int mod(int x, int m, bool log = true)
@@ -14,13 +13,12 @@ namespace PostfixNotation
             return r;
         }
 
-        //"входной" метод класса
-        static public int Calculate(string input, Field field)
+        static public int Calculate(string input, int size)
         {
 
-            string output = GetExpression(input); //преобразование выражения в постфиксную запись
+            string output = GetExpression(input);
             Console.WriteLine(output);
-            return Counting(output.Replace('.', ','), field); //решение выражения
+            return Counting(output.Replace('.', ','), size);
 
         }
 
@@ -35,60 +33,44 @@ namespace PostfixNotation
             }
         }
 
-        public static int mulinv(int b, int n) {
-            var data = egcd(b, n);
-            //Console.WriteLine($"{data.g},{data.x}");
-            //if (data.g != 1)
-            //    throw new Exception($"Ошибка поиска обратного числа для {b} в поле {n}");
-            return mod(data.x, n);
+        public static int mulinv(int b, int n) => mod(egcd(b, n).x, n);
 
-        }
-
-        //метод перевода выражения в постфиксную запись
         static public string GetExpression(string input)
         {
-            string output = string.Empty; //Строка для хранения выражения
-            Stack<char> operStack = new Stack<char>(); //Стек для хранения операторов
+            string output = string.Empty;
+            Stack<char> operStack = new Stack<char>();
 
-            for (int i = 0; i < input.Length; i++) //Для каждого символа в входной строке
+            for (int i = 0; i < input.Length; i++)
             {
-
-                //Разделители пропускаем
                 if (IsDelimeter(input[i]))
-                    continue; //Переходим к следующему символу
+                    continue;
 
-                //проверка на отрицательное число: если знак "-" в начале строки или перед знаком "-" нет числа 
                 if (input[i] == '-' && ((i > 0 && !Char.IsDigit(input[i - 1])) || i == 0))
                 {
                     i++;
-                    output += "-";//в переменную для чисел добавляется знак "-"    
+                    output += "-";  
                 }
 
-                //Если символ - цифра, то считываем все число
-                if (Char.IsDigit(input[i])) //Если цифра
+                if (Char.IsDigit(input[i]))
                 {
-                    //Читаем до разделителя или оператора, что бы получить число
                     while (!IsDelimeter(input[i]) && !IsOperator(input[i]))
                     {
-                        output += input[i]; //Добавляем каждую цифру числа к нашей строке
-                        i++; //Переходим к следующему символу
+                        output += input[i];
+                        i++;
 
-                        if (i == input.Length) break; //Если символ - последний, то выходим из цикла
+                        if (i == input.Length) break;
                     }
 
-                    output += " "; //Дописываем после числа пробел в строку с выражением
-                    i--; //Возвращаемся на один символ назад, к символу перед разделителем
+                    output += " ";
+                    i--;
                 }
 
-                //Если символ - оператор
-                if (IsOperator(input[i])) //Если оператор
+                if (IsOperator(input[i]))
                 {
-
-                    if (input[i] == '(') //Если символ - открывающая скобка
-                        operStack.Push(input[i]); //Записываем её в стек
-                    else if (input[i] == ')') //Если символ - закрывающая скобка
+                    if (input[i] == '(')
+                        operStack.Push(input[i]);
+                    else if (input[i] == ')')
                     {
-                        //Выписываем все операторы до открывающей скобки в строку
                         char s = operStack.Pop();
 
                         while (s != '(')
@@ -98,28 +80,26 @@ namespace PostfixNotation
                             s = operStack.Pop();
                         }
                     }
-                    else //Если любой другой оператор
+                    else
                     {
-                        if (operStack.Count > 0) //Если в стеке есть элементы
-                            if (GetPriority(input[i]) <= GetPriority(operStack.Peek())) //И если приоритет нашего оператора меньше или равен приоритету оператора на вершине стека
-                                output += operStack.Pop().ToString() + " "; //То добавляем последний оператор из стека в строку с выражением
+                        if (operStack.Count > 0)
+                            if (GetPriority(input[i]) <= GetPriority(operStack.Peek()))
+                                output += operStack.Pop().ToString() + " ";
 
-                        operStack.Push(char.Parse(input[i].ToString())); //Если стек пуст, или же приоритет оператора выше - добавляем операторов на вершину стека
+                        operStack.Push(char.Parse(input[i].ToString()));
 
                     }
                 }
             }
 
-            //Когда прошли по всем символам, выкидываем из стека все оставшиеся там операторы в строку
             while (operStack.Count > 0)
                 output += operStack.Pop() + " ";
 
-            return output; //Возвращаем выражение в постфиксной записи
+            return output;
 
         }
 
-        //метод решения OPN
-        static private int Counting(string output, Field field)
+        static private int Counting(string output, int size)
         {
             string result;
 
@@ -129,23 +109,19 @@ namespace PostfixNotation
 
                 switch (mas[i])
                 {
-                    case "+"://если найдена операция сложения
-                        result = (mod((mod(int.Parse(mas[i - 2]), field.size) + mod(int.Parse(mas[i - 1]), field.size)), field.size)).ToString();//выполняем сложение и переводим ее в строку
+                    case "+":
+                        result = (mod((mod(int.Parse(mas[i - 2]), size) + mod(int.Parse(mas[i - 1]), size)), size)).ToString();
 
-
-
-                        mas[i - 2] = result;//на место 1-ого операнда записывается результат (как если бы a=a+b)
-                        for (int j = i - 1; j < mas.Length - 2; j++)//удаляем из массива второй операнд и знак арифм действия
+                        mas[i - 2] = result;
+                        for (int j = i - 1; j < mas.Length - 2; j++)
                             mas[j] = mas[j + 2];
-                        Array.Resize(ref mas, mas.Length - 2);//обрезаем массив элементов на 2 удаленнх элемента
+                        Array.Resize(ref mas, mas.Length - 2);
                         i -= 2;
                         break;
 
 
-                    case "-"://далее все аналогично
-                        result = (mod((mod(int.Parse(mas[i - 2]), field.size) - mod(int.Parse(mas[i - 1]), field.size)), field.size)).ToString();
-
-
+                    case "-":
+                        result = (mod((mod(int.Parse(mas[i - 2]), size) - mod(int.Parse(mas[i - 1]), size)), size)).ToString();
 
                         mas[i - 2] = result;
                         for (int j = i - 1; j < mas.Length - 2; j++)
@@ -155,9 +131,7 @@ namespace PostfixNotation
                         break;
 
                     case "*":
-                        result = (mod((mod(int.Parse(mas[i - 2]), field.size) * mod(int.Parse(mas[i - 1]), field.size)), field.size)).ToString();
-
-
+                        result = (mod((mod(int.Parse(mas[i - 2]), size) * mod(int.Parse(mas[i - 1]), size)), size)).ToString();
 
                         mas[i - 2] = result;
                         for (int j = i - 1; j < mas.Length - 2; j++)
@@ -167,9 +141,8 @@ namespace PostfixNotation
                         break;
 
                     case "/":
-                        //result = (int.Parse(mas[i - 2]) / int.Parse(mas[i - 1])).ToString();
-                        result = (mod(int.Parse(mas[i - 2]), field.size) * mulinv(mod(int.Parse(mas[i - 1]), field.size), field.size)).ToString();
-
+                        if (int.Parse(mas[i - 1]) == 0) throw new Exception("Ошибка! Обнаружено деление на 0");
+                        result = (mod(int.Parse(mas[i - 2]), size) * mulinv(mod(int.Parse(mas[i - 1]), size), size)).ToString();
 
                         mas[i - 2] = result;
                         for (int j = i - 1; j < mas.Length - 2; j++)
@@ -177,21 +150,6 @@ namespace PostfixNotation
                         Array.Resize(ref mas, mas.Length - 2);
                         i -= 2;
                         break;
-
-
-                    //case "^":
-                    //    result = (mod((int)Math.Pow(mod(int.Parse(mas[i - 2]), field.size), mod(int.Parse(mas[i - 1]), field.size)), field.size)).ToString();
-
-
-
-                    //    mas[i - 2] = result;
-                    //    for (int j = i - 1; j < mas.Length - 2; j++)
-                    //        mas[j] = mas[j + 2];
-                    //    Array.Resize(ref mas, mas.Length - 2);
-                    //    i -= 2;
-                    //    break;
-
-
                 }
 
             int a = 0;
@@ -199,7 +157,6 @@ namespace PostfixNotation
             return a;
         }
 
-        //Метод возвращает приоритет оператора
         static private byte GetPriority(char s)
         {
             switch (s)
@@ -210,12 +167,10 @@ namespace PostfixNotation
                 case '-': return 3;
                 case '*': return 4;
                 case '/': return 4;
-                case '^': return 5;
-                default: return 6;
+                default: return 5;
             }
         }
 
-        //Метод возвращает true, если проверяемый символ - оператор
         static private bool IsOperator(char с)
         {
             if (("+-/*^()".IndexOf(с) != -1))
@@ -223,7 +178,6 @@ namespace PostfixNotation
             return false;
         }
 
-        //Метод возвращает true, если проверяемый символ - разделитель ("пробел" или "равно")
         static private bool IsDelimeter(char c)
         {
             if ((" =".IndexOf(c) != -1))

@@ -64,8 +64,9 @@ namespace FieldsCalculator
         {
             try
             {
-                Field field = new Field(int.Parse(textBox2.Text));
-                var result = MathPostfixNotation.Calculate(textBox1.Text, field) % field.size;
+                int fieldsize = int.Parse(textBox2.Text);
+                if (!validateSimple(fieldsize)) throw new Exception("Введённый размер поля не является простым числом");
+                var result = MathPostfixNotation.Calculate(textBox1.Text, fieldsize) % fieldsize;
                 label1.Text = result.ToString();
             }
             catch(Exception ex)
@@ -73,6 +74,19 @@ namespace FieldsCalculator
                 label1.Text = ex.Message;
             }
             //label1.Text = MathPostfixNotation.mulinv(3,13).ToString();
+        }
+
+        private static bool validateSimple(int value)
+        {
+            for (int i = 2; i <= value / 2; i++)
+            {
+                if (value % i == 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+
         }
     }
 }
